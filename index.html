@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RitmoFit Pilates Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #E8196E;
+      --pink-light: #FF4D94;
+      --gold: #C9A84C;
+      --gold-light: #F0D080;
+      --black: #0a0a0a;
+      --dark: #111111;
+      --dark-card: #1a1a1a;
+      --white: #ffffff;
+      --gray: #888888;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    [id] { scroll-margin-top: 80px; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 40px;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(232,25,110,0.2);
+      transition: all 0.3s;
+    }
+    .navbar.scrolled { padding: 8px 40px; background: rgba(10,10,10,0.98); }
+
+    .logo { height: 52px; width: auto; cursor: pointer; }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--pink);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--pink); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .btn-reservar {
+      background: var(--pink) !important;
+      color: white !important;
+      padding: 10px 22px !important;
+      border-radius: 25px;
+      font-weight: 700 !important;
+      font-size: 0.7rem !important;
+      letter-spacing: 1.5px !important;
+      transition: all 0.3s !important;
+      border: 2px solid var(--pink);
+    }
+    .btn-reservar:hover { background: transparent !important; color: var(--pink) !important; }
+    .btn-reservar::after { display: none !important; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px;
+    }
+    .hamburger span { width: 24px; height: 2px; background: white; transition: all 0.3s; }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100vh;
+      background: rgba(10,10,10,0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--pink); }
+    .mobile-close {
+      position: absolute;
+      top: 25px; right: 35px;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+    .slide.active { opacity: 1; }
+    .slide img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .slide-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.25) 0%,
+        rgba(10,10,10,0.5) 50%,
+        rgba(10,10,10,0.85) 100%
+      );
+    }
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+      z-index: 10;
+    }
+    .hero-subtitle {
+      font-size: 0.78rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .hero-title .pink { color: var(--pink); font-style: italic; }
+    .hero-tagline {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 40px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .hero-buttons { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      background: var(--pink);
+      color: white;
+      padding: 14px 36px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      border: 2px solid var(--pink);
+    }
+    .btn-primary:hover { background: transparent; color: var(--pink); }
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      padding: 14px 36px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      border: 2px solid rgba(255,255,255,0.45);
+    }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 20;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dot.active { background: var(--pink); width: 24px; border-radius: 4px; }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+      background: rgba(232,25,110,0.25);
+      border: 1px solid rgba(232,25,110,0.5);
+      color: white;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1.4rem;
+    }
+    .carousel-arrow:hover { background: var(--pink); border-color: var(--pink); }
+    .arrow-left { left: 20px; }
+    .arrow-right { right: 20px; }
+
+    /* ===== SECTIONS ===== */
+    section { padding: 90px 0; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+    .section-divider { width: 50px; height: 2px; background: var(--pink); margin: 20px 0; }
+    .section-divider.gold { background: var(--gold); }
+    .section-divider.center { margin: 20px auto; }
+
+    /* ===== ABOUT ===== */
+    .about { background: var(--dark); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 70px;
+      align-items: center;
+    }
+    .about-text p {
+      color: rgba(255,255,255,0.7);
+      line-height: 1.85;
+      font-size: 0.97rem;
+      margin-bottom: 25px;
+    }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(232,25,110,0.07);
+      border: 1px solid rgba(232,25,110,0.18);
+      padding: 11px 15px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+    .benefit-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); flex-shrink: 0; }
+    .about-image-col { position: relative; }
+    .about-image-col img {
+      width: 100%; height: 500px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 4px;
+      display: block;
+    }
+    .about-badge {
+      position: absolute;
+      bottom: -18px; left: -18px;
+      background: var(--pink);
+      padding: 18px 22px;
+      border-radius: 4px;
+      line-height: 1.2;
+    }
+    .about-badge .b-num { font-size: 2.2rem; font-weight: 800; }
+    .about-badge .b-lbl { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; }
+
+    /* ===== CLASSES ===== */
+    .classes { background: var(--black); }
+    .classes-header { text-align: center; margin-bottom: 55px; }
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+    }
+    .class-card {
+      position: relative;
+      height: 400px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .class-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform 0.6s ease;
+    }
+    .class-card:hover img { transform: scale(1.07); }
+    .class-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.2) 55%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px 22px;
+      transition: background 0.4s;
+    }
+    .class-card:hover .class-overlay {
+      background: linear-gradient(to top, rgba(232,25,110,0.82) 0%, rgba(10,10,10,0.35) 55%, transparent 100%);
+    }
+    .class-num { font-size: 0.62rem; letter-spacing: 3px; color: var(--gold); margin-bottom: 6px; }
+    .class-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .class-tags { font-size: 0.72rem; color: rgba(255,255,255,0.65); letter-spacing: 0.5px; }
+    .class-card:hover .class-tags { color: rgba(255,255,255,0.9); }
+
+    /* ===== SCHEDULE ===== */
+    .schedule { background: var(--dark); }
+    .schedule-header { text-align: center; margin-bottom: 50px; }
+    .schedule-table-wrap { overflow-x: auto; }
+    .schedule-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+    .schedule-table th {
+      background: var(--pink);
+      color: white;
+      padding: 13px 18px;
+      text-align: center;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .schedule-table th:first-child { background: #0d0d0d; color: var(--gold); }
+    .schedule-table td {
+      padding: 13px 18px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+    }
+    .schedule-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .schedule-table td:first-child { color: var(--gold); font-weight: 700; font-size: 0.88rem; background: rgba(0,0,0,0.3); }
+    .pill {
+      display: inline-block;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .pill-barre { background: rgba(232,25,110,0.18); color: #FF7AB8; border: 1px solid rgba(232,25,110,0.35); }
+    .pill-pilates { background: rgba(201,168,76,0.18); color: var(--gold-light); border: 1px solid rgba(201,168,76,0.35); }
+    .pill-sculp { background: rgba(130,60,220,0.18); color: #C08AFF; border: 1px solid rgba(130,60,220,0.3); }
+    .pill-barralates { background: rgba(0,185,190,0.18); color: #6AE8EB; border: 1px solid rgba(0,185,190,0.3); }
+
+    /* ===== PACKAGES ===== */
+    .packages { background: var(--black); }
+    .packages-header { text-align: center; margin-bottom: 20px; }
+    .trial-row { display: flex; justify-content: center; gap: 25px; margin-bottom: 50px; flex-wrap: wrap; }
+    .trial-card {
+      text-align: center;
+      padding: 24px 45px;
+      border: 1px solid rgba(232,25,110,0.28);
+      border-radius: 10px;
+      background: rgba(232,25,110,0.05);
+      min-width: 160px;
+    }
+    .trial-lbl { font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+    .trial-price { font-size: 2.6rem; font-weight: 800; color: var(--pink); line-height: 1; }
+    .trial-price span { font-size: 0.9rem; font-weight: 400; color: rgba(255,255,255,0.5); }
+
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 22px;
+    }
+    .pkg-card {
+      background: var(--dark-card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .pkg-card:hover { transform: translateY(-6px); border-color: rgba(232,25,110,0.5); box-shadow: 0 20px 50px rgba(232,25,110,0.12); }
+    .pkg-card.featured { border-color: var(--pink); box-shadow: 0 0 30px rgba(232,25,110,0.15); }
+    .pkg-badge {
+      position: absolute;
+      top: 15px; right: 15px;
+      background: var(--pink);
+      color: white;
+      font-size: 0.62rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+    .pkg-head { padding: 28px 28px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .pkg-name { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; margin-bottom: 6px; }
+    .pkg-desc { font-size: 0.8rem; color: rgba(255,255,255,0.5); line-height: 1.55; }
+    .pkg-body { padding: 22px 28px; }
+    .pkg-details { display: flex; gap: 12px; margin-bottom: 22px; }
+    .pkg-detail { flex: 1; text-align: center; background: rgba(255,255,255,0.04); padding: 12px 6px; border-radius: 8px; }
+    .detail-lbl { font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 5px; }
+    .detail-val { font-size: 0.95rem; font-weight: 700; color: var(--pink); }
+    .pkg-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 18px; }
+    .p-cur { font-size: 1.2rem; color: var(--gold); font-weight: 600; }
+    .p-amt { font-size: 3rem; font-weight: 800; line-height: 1; }
+    .p-mxn { font-size: 0.82rem; color: var(--gray); margin-left: 3px; }
+    .pkg-cta {
+      display: block;
+      text-align: center;
+      background: var(--pink);
+      color: white;
+      padding: 13px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      border: 2px solid var(--pink);
+    }
+    .pkg-cta:hover { background: transparent; color: var(--pink); }
+    .pkg-card:not(.featured) .pkg-cta { background: transparent; color: var(--pink); }
+    .pkg-card:not(.featured) .pkg-cta:hover { background: var(--pink); color: white; }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: #050505;
+      border-top: 1px solid rgba(232,25,110,0.25);
+      padding: 70px 0 40px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: 50px;
+      margin-bottom: 50px;
+    }
+    .footer-logo { height: 65px; margin-bottom: 18px; display: block; }
+    .footer-about { font-size: 0.84rem; color: rgba(255,255,255,0.45); line-height: 1.75; max-width: 280px; }
+    .footer-social { display: flex; gap: 10px; margin-top: 18px; }
+    .social-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(232,25,110,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--pink);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    .social-btn:hover { background: var(--pink); color: white; border-color: var(--pink); }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; font-weight: 700; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 11px; }
+    .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--pink); }
+    .contact-row { display: flex; align-items: flex-start; gap: 11px; margin-bottom: 14px; }
+    .c-icon { color: var(--pink); font-size: 0.9rem; margin-top: 1px; flex-shrink: 0; }
+    .c-txt { color: rgba(255,255,255,0.5); font-size: 0.84rem; line-height: 1.5; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-bottom p, .footer-bottom a { color: rgba(255,255,255,0.28); font-size: 0.78rem; }
+    .footer-bottom a { text-decoration: none; transition: color 0.3s; }
+    .footer-bottom a:hover { color: var(--pink); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px) {
+      .classes-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .navbar { padding: 12px 20px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .about-image-col { order: -1; }
+      .about-image-col img { height: 320px; }
+      .about-badge { bottom: -12px; left: 12px; }
+      .classes-grid { grid-template-columns: repeat(2, 1fr); }
+      .class-card { height: 300px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 35px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 580px) {
+      .classes-grid { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .packages-grid { grid-template-columns: 1fr; }
+      .pkg-details { gap: 8px; }
+      .hero-title { font-size: 2.5rem; }
+      .arrow-left, .arrow-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <img src="WhatsApp Image 2026-05-05 at 3.06.33 PM.jpeg" alt="RitmoFit Pilates Studio" class="logo">
+    <ul class="nav-links">
+      <li><a href="#inicio">INICIO</a></li>
+      <li><a href="#nosotros">NOSOTROS</a></li>
+      <li><a href="#clases">CLASES</a></li>
+      <li><a href="#horarios">HORARIOS</a></li>
+      <li><a href="#paquetes">PAQUETES</a></li>
+      <li><a href="#contacto">CONTACTO</a></li>
+      <li><a href="https://wa.me/529994459577" class="btn-reservar" target="_blank">RESERVAR</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <span class="mobile-close" onclick="toggleMenu()">✕</span>
+    <a href="#inicio" onclick="toggleMenu()">INICIO</a>
+    <a href="#nosotros" onclick="toggleMenu()">NOSOTROS</a>
+    <a href="#clases" onclick="toggleMenu()">CLASES</a>
+    <a href="#horarios" onclick="toggleMenu()">HORARIOS</a>
+    <a href="#paquetes" onclick="toggleMenu()">PAQUETES</a>
+    <a href="#contacto" onclick="toggleMenu()">CONTACTO</a>
+    <a href="https://wa.me/529994459577" target="_blank" style="color:var(--pink)">RESERVAR</a>
+  </div>
+
+  <!-- HERO CAROUSEL -->
+  <section class="hero" id="inicio">
+    <div class="slide active" id="slide-0">
+      <img src="ChatGPT Image 6 may 2026, 11_02_06 a.m..png" alt="Barre Studio">
+      <div class="slide-overlay"></div>
+    </div>
+    <div class="slide" id="slide-1">
+      <img src="ChatGPT Image 6 may 2026, 11_03_41 a.m..png" alt="Pilates Studio">
+      <div class="slide-overlay"></div>
+    </div>
+    <div class="slide" id="slide-2">
+      <img src="ChatGPT Image 6 may 2026, 11_10_17 a.m..png" alt="Core Studio">
+      <div class="slide-overlay"></div>
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-subtitle">Mérida, Yucatán · Chichi Suárez</p>
+      <h1 class="hero-title">
+        Transforma<br>tu vida con<br>
+        <span class="pink">Pilates & Barre</span>
+      </h1>
+      <p class="hero-tagline">Fuerza &middot; Flexibilidad &middot; Bienestar</p>
+      <div class="hero-buttons">
+        <a href="https://wa.me/529994459577" class="btn-primary" target="_blank">RESERVAR CLASE</a>
+        <a href="#paquetes" class="btn-secondary">VER PAQUETES</a>
+      </div>
+    </div>
+
+    <button class="carousel-arrow arrow-left" onclick="changeSlide(-1)">&#8249;</button>
+    <button class="carousel-arrow arrow-right" onclick="changeSlide(1)">&#8250;</button>
+
+    <div class="carousel-dots">
+      <div class="dot active" onclick="goToSlide(0)"></div>
+      <div class="dot" onclick="goToSlide(1)"></div>
+      <div class="dot" onclick="goToSlide(2)"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="nosotros">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <p class="section-label">Sobre Nosotros</p>
+          <h2 class="section-title">Un espacio diseñado<br>para <em style="color:var(--pink);font-style:italic">ti</em></h2>
+          <div class="section-divider"></div>
+          <p>En Pilates Studio RF fortalecemos tu cuerpo, mejoramos tu flexibilidad y elevamos tu bienestar integral. Nuestro enfoque es brindarte instrucción de alta calidad en un ambiente acogedor y motivador.</p>
+          <p>Ya sea que estés comenzando o buscando profundizar tu práctica, estamos aquí para ti.</p>
+          <div class="benefits-grid">
+            <div class="benefit-item"><div class="benefit-dot"></div>Fortalece el Core</div>
+            <div class="benefit-item"><div class="benefit-dot"></div>Mejora la Postura</div>
+            <div class="benefit-item"><div class="benefit-dot"></div>Flexibilidad y Movilidad</div>
+            <div class="benefit-item"><div class="benefit-dot"></div>Conexión Mente-Cuerpo</div>
+            <div class="benefit-item"><div class="benefit-dot"></div>Soporte de Rehabilitación</div>
+            <div class="benefit-item"><div class="benefit-dot"></div>Reduce el Estrés</div>
+          </div>
+        </div>
+        <div class="about-image-col">
+          <img src="ChatGPT Image 6 may 2026, 11_03_41 a.m..png" alt="Pilates Studio RF">
+          <div class="about-badge">
+            <div class="b-num">RF</div>
+            <div class="b-lbl">Pilates Studio</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLASSES -->
+  <section class="classes" id="clases">
+    <div class="container">
+      <div class="classes-header">
+        <p class="section-label">Nuestras Disciplinas</p>
+        <h2 class="section-title">Clases</h2>
+        <div class="section-divider center"></div>
+        <p style="color:rgba(255,255,255,0.45);font-size:0.78rem;letter-spacing:4px;text-transform:uppercase">DESCUBRE HASTA DÓNDE PUEDES LLEGAR</p>
+      </div>
+    </div>
+    <div class="classes-grid">
+      <div class="class-card">
+        <img src="ChatGPT Image 6 may 2026, 11_10_17 a.m..png" alt="Barre">
+        <div class="class-overlay">
+          <p class="class-num">01</p>
+          <h3 class="class-name">Barre</h3>
+          <p class="class-tags">Ballet + fitness · Tonifica</p>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="ChatGPT Image 6 may 2026, 11_02_06 a.m..png" alt="Pilates Mat">
+        <div class="class-overlay">
+          <p class="class-num">02</p>
+          <h3 class="class-name">Pilates Mat</h3>
+          <p class="class-tags">Fuerza · Flexibilidad · Control</p>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="ChatGPT Image 6 may 2026, 11_03_41 a.m..png" alt="Barralates">
+        <div class="class-overlay">
+          <p class="class-num">03</p>
+          <h3 class="class-name">Barralates</h3>
+          <p class="class-tags">Barre + Pilates · Lo mejor de dos mundos</p>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="ChatGPT Image 6 may 2026, 11_10_17 a.m..png" alt="Sculp">
+        <div class="class-overlay">
+          <p class="class-num">04</p>
+          <h3 class="class-name">Sculp</h3>
+          <p class="class-tags">Esculpe · Define · Resiste</p>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="ChatGPT Image 6 may 2026, 11_02_06 a.m..png" alt="Stretching">
+        <div class="class-overlay">
+          <p class="class-num">05</p>
+          <h3 class="class-name">Stretching</h3>
+          <p class="class-tags">Flexibilidad profunda</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section class="schedule" id="horarios">
+    <div class="container">
+      <div class="schedule-header">
+        <p class="section-label">Chichi Suárez · Mérida</p>
+        <h2 class="section-title">Horarios</h2>
+        <div class="section-divider gold center"></div>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>HORA</th>
+              <th>LUNES</th>
+              <th>MARTES</th>
+              <th>MIÉRCOLES</th>
+              <th>JUEVES</th>
+              <th>VIERNES</th>
+              <th>SÁBADO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>07:00 AM</td>
+              <td>—</td>
+              <td>—</td>
+              <td><span class="pill pill-barralates">Barralates</span></td>
+              <td>—</td>
+              <td><span class="pill pill-barre">Barre</span></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>08:00 AM</td>
+              <td>—</td>
+              <td>—</td>
+              <td><span class="pill pill-sculp">Sculp y Strech</span></td>
+              <td>—</td>
+              <td><span class="pill pill-pilates">Pilates</span></td>
+              <td><span class="pill pill-pilates">Pilates</span></td>
+            </tr>
+            <tr>
+              <td>07:00 PM</td>
+              <td>—</td>
+              <td><span class="pill pill-barre">Barre</span></td>
+              <td>—</td>
+              <td><span class="pill pill-pilates">Pilates</span></td>
+              <td><span class="pill pill-sculp">Sculp y Strech</span></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>08:00 PM</td>
+              <td><span class="pill pill-barre">Barre</span></td>
+              <td><span class="pill pill-pilates">Pilates</span></td>
+              <td>—</td>
+              <td><span class="pill pill-pilates">Pilates</span></td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section class="packages" id="paquetes">
+    <div class="container">
+      <div class="packages-header">
+        <p class="section-label">Pilates Studio RF</p>
+        <h2 class="section-title">Nuestros Paquetes</h2>
+        <div class="section-divider center"></div>
+      </div>
+
+      <div class="trial-row">
+        <div class="trial-card">
+          <p class="trial-lbl">Clase Muestra</p>
+          <p class="trial-price">$60 <span>MXN</span></p>
+        </div>
+        <div class="trial-card">
+          <p class="trial-lbl">Visita</p>
+          <p class="trial-price">$120 <span>MXN</span></p>
+        </div>
+      </div>
+
+      <div class="packages-grid">
+        <div class="pkg-card">
+          <div class="pkg-head">
+            <h3 class="pkg-name">Paquete Esencial</h3>
+            <p class="pkg-desc">Para quienes inician su práctica o desean reconectar con lo esencial.</p>
+          </div>
+          <div class="pkg-body">
+            <div class="pkg-details">
+              <div class="pkg-detail">
+                <p class="detail-lbl">Incluye</p>
+                <p class="detail-val">4 clases</p>
+              </div>
+              <div class="pkg-detail">
+                <p class="detail-lbl">Vigencia</p>
+                <p class="detail-val">3 sem.</p>
+              </div>
+            </div>
+            <div class="pkg-price">
+              <span class="p-cur">$</span>
+              <span class="p-amt">300</span>
+              <span class="p-mxn">MXN</span>
+            </div>
+            <a href="https://wa.me/529994459577?text=Hola!%20Me%20interesa%20el%20Paquete%20Esencial%20%284%20clases%2C%20%24300%29" class="pkg-cta" target="_blank">RESERVAR</a>
+          </div>
+        </div>
+
+        <div class="pkg-card featured">
+          <div class="pkg-badge">MÁS POPULAR</div>
+          <div class="pkg-head">
+            <h3 class="pkg-name">Paquete Mente-Cuerpo</h3>
+            <p class="pkg-desc">Para quienes buscan conectar mente y cuerpo hacia una mejor versión.</p>
+          </div>
+          <div class="pkg-body">
+            <div class="pkg-details">
+              <div class="pkg-detail">
+                <p class="detail-lbl">Incluye</p>
+                <p class="detail-val">8 clases</p>
+              </div>
+              <div class="pkg-detail">
+                <p class="detail-lbl">Vigencia</p>
+                <p class="detail-val">4 sem.</p>
+              </div>
+            </div>
+            <div class="pkg-price">
+              <span class="p-cur">$</span>
+              <span class="p-amt">500</span>
+              <span class="p-mxn">MXN</span>
+            </div>
+            <a href="https://wa.me/529994459577?text=Hola!%20Me%20interesa%20el%20Paquete%20Mente-Cuerpo%20%288%20clases%2C%20%24500%29" class="pkg-cta" target="_blank">RESERVAR</a>
+          </div>
+        </div>
+
+        <div class="pkg-card">
+          <div class="pkg-head">
+            <h3 class="pkg-name">Paquete Transformación</h3>
+            <p class="pkg-desc">Para quienes buscan tonificar su cuerpo, fortalecer y mejorar su postura.</p>
+          </div>
+          <div class="pkg-body">
+            <div class="pkg-details">
+              <div class="pkg-detail">
+                <p class="detail-lbl">Incluye</p>
+                <p class="detail-val">12 clases</p>
+              </div>
+              <div class="pkg-detail">
+                <p class="detail-lbl">Vigencia</p>
+                <p class="detail-val">1 mes</p>
+              </div>
+            </div>
+            <div class="pkg-price">
+              <span class="p-cur">$</span>
+              <span class="p-amt">650</span>
+              <span class="p-mxn">MXN</span>
+            </div>
+            <a href="https://wa.me/529994459577?text=Hola!%20Me%20interesa%20el%20Paquete%20Transformaci%C3%B3n%20%2812%20clases%2C%20%24650%29" class="pkg-cta" target="_blank">RESERVAR</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER / CONTACT -->
+  <footer class="footer" id="contacto">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <img src="WhatsApp Image 2026-05-05 at 3.06.33 PM.jpeg" alt="RitmoFit" class="footer-logo">
+          <p class="footer-about">Un espacio donde el movimiento transforma. Clases de Pilates, Barre, Sculp y más en Mérida, Yucatán.</p>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/pilatesstudio_rf" class="social-btn" target="_blank" title="Instagram">IG</a>
+            <a href="https://wa.me/529994459577" class="social-btn" target="_blank" title="WhatsApp">WA</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#nosotros">Nosotros</a></li>
+            <li><a href="#clases">Clases</a></li>
+            <li><a href="#horarios">Horarios</a></li>
+            <li><a href="#paquetes">Paquetes</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contacto</h4>
+          <div class="contact-row">
+            <span class="c-icon">📍</span>
+            <span class="c-txt">Calle 14 x 23 esq., Chichi Suárez, Mérida, Yuc.</span>
+          </div>
+          <div class="contact-row">
+            <span class="c-icon">📱</span>
+            <span class="c-txt">999 44 59 577</span>
+          </div>
+          <div class="contact-row">
+            <span class="c-icon">📸</span>
+            <span class="c-txt">@pilatesstudio_rf</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 RitmoFit Pilates Studio — Todos los derechos reservados.</p>
+        <div style="display:flex;gap:15px">
+          <a href="#">Términos y Condiciones</a>
+          <span style="color:rgba(255,255,255,0.15)">|</span>
+          <a href="#">Aviso de Privacidad</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Carousel
+    let current = 0;
+    const total = 3;
+    let timer = setInterval(() => goToSlide(current + 1), 5000);
+
+    function goToSlide(n) {
+      document.getElementById('slide-' + current).classList.remove('active');
+      document.querySelectorAll('.dot')[current].classList.remove('active');
+      current = (n % total + total) % total;
+      document.getElementById('slide-' + current).classList.add('active');
+      document.querySelectorAll('.dot')[current].classList.add('active');
+    }
+
+    function changeSlide(dir) {
+      goToSlide(current + dir);
+      clearInterval(timer);
+      timer = setInterval(() => goToSlide(current + 1), 5000);
+    }
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
