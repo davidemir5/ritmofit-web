@@ -87,6 +87,19 @@
       transition: all 0.3s !important;
       border: 2px solid var(--pink);
     }
+    .btn-ubicacion {
+      background: transparent !important;
+      color: white !important;
+      padding: 10px 22px !important;
+      border-radius: 25px;
+      font-weight: 700 !important;
+      font-size: 0.7rem !important;
+      letter-spacing: 1.5px !important;
+      transition: all 0.3s !important;
+      border: 2px solid rgba(255,255,255,0.45) !important;
+    }
+    .btn-ubicacion:hover { border-color: var(--gold) !important; color: var(--gold) !important; }
+    .btn-ubicacion::after { display: none !important; }
     .btn-reservar:hover { background: transparent !important; color: var(--pink) !important; }
     .btn-reservar::after { display: none !important; }
 
@@ -578,7 +591,7 @@
       <li><a href="#horarios">HORARIOS</a></li>
       <li><a href="#paquetes">PAQUETES</a></li>
       <li><a href="#contacto">CONTACTO</a></li>
-      <li><a href="https://maps.google.com/?q=21.004282,-89.554993" target="_blank">UBICACIÓN</a></li>
+      <li><a href="https://maps.google.com/?q=21.004282,-89.554993" target="_blank" class="btn-ubicacion">📍 UBICACIÓN</a></li>
       <li><a href="https://wa.me/529994459577" class="btn-reservar" target="_blank">RESERVAR</a></li>
     </ul>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -935,8 +948,7 @@
         <div class="footer-col">
           <h4>Contacto</h4>
           <div class="contact-row">
-            <span class="c-icon">📍</span>
-            <a href="https://maps.google.com/?q=21.004282,-89.554993" target="_blank" class="c-txt" style="color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.3s" onmouseover="this.style.color='#E8196E'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Calle 14 #257, Chichi Suárez, Mérida, Yuc. ↗</a>
+            <a href="https://maps.google.com/?q=21.004282,-89.554993" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:transparent;color:white;text-decoration:none;padding:10px 18px;border-radius:25px;font-weight:700;font-size:0.72rem;letter-spacing:1.5px;text-transform:uppercase;border:2px solid rgba(255,255,255,0.35);transition:all 0.3s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='rgba(255,255,255,0.35)';this.style.color='white'">📍 Calle 14 #257, Chichi Suárez</a>
           </div>
           <div class="contact-row">
             <span class="c-icon">📱</span>
